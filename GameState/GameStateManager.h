@@ -12,6 +12,7 @@ public:
 	void setState(int state);
 	void update();
 	void draw(sf::RenderWindow* window);
+	void handleInputs(sf::Event* events);
 	int getCurrState();
 	static enum states {
 		MENUSTATE,

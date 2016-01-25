@@ -3,6 +3,7 @@
 Game::Game() :
 window(sf::RenderWindow(sf::VideoMode(1920, 1080), "Strigiformes", sf::Style::Close))
 {
+	window.setKeyRepeatEnabled(false);
 	gsm = new GameStateManager();
 }
 
@@ -18,10 +19,11 @@ void Game::run()
 
 	while (window.isOpen())
 	{
-		sf::Event event;
-		while (window.pollEvent(event))
+		sf::Event events;
+		while (window.pollEvent(events))
 		{
-			if (event.type == sf::Event::Closed)
+			gsm->handleInputs(&events);
+			if (events.type == sf::Event::Closed)
 				window.close();
 		}
 

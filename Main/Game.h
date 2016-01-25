@@ -13,6 +13,7 @@ public:
 private:
 	void update();
 	void draw();
+	void handleInputs();
 	sf::RenderWindow window;
 	GameStateManager* gsm;
 };

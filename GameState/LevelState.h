@@ -1,12 +1,13 @@
-#ifndef INCLUDED_MENUSTATE
-#define INCLUDED_MENUSTATE
+#ifndef INCLUDED_LEVELSTATE
+#define INCLUDED_LEVELSTATE
 
-#include <SFML\Graphics.hpp>
 #include "GameState.h"
+#include "Player.h"
 
-class MenuState : public GameState {
+class LevelState : public GameState
+{
 public:
-	MenuState(GameStateManager* gsm);
+	LevelState(GameStateManager* gsm);
 	virtual void init();
 	virtual void update();
 	virtual void draw(sf::RenderWindow* window);
@@ -14,8 +15,7 @@ public:
 protected:
 	GameStateManager* gsm;
 private:
-	int selection;
-	int pointerY;
+	Player* player;
 };
 
 #endif
