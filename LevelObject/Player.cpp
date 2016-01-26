@@ -1,10 +1,14 @@
 #include "Player.h"
+#include <SFML\Audio.hpp>
 
 using namespace sf;
 
 Texture playerImg;
 Sprite playerSprite;
 IntRect playerRect;
+
+SoundBuffer jumpBuffer;
+Sound jumpSound;
 
 Player::Player() :
 x(600),
@@ -30,6 +34,8 @@ void Player::init()
 	playerSprite.setTextureRect(playerRect);
 	playerSprite.setPosition(x, y);
 	playerSprite.setOrigin(75, 100);
+	jumpBuffer.loadFromFile("Resources/soft-slidertick.wav");
+	jumpSound.setBuffer(jumpBuffer);
 }
 
 void Player::update()
@@ -55,6 +61,7 @@ void Player::update()
 	if (jumping)
 	{
 		velY = -15;
+		//jumpSound.play();
 		jumping = false;
 	}
 
