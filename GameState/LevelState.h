@@ -3,6 +3,10 @@
 
 #include "GameState.h"
 #include "Player.h"
+#include <vector>
+
+using namespace std;
+using namespace sf;
 
 class LevelState : public GameState
 {
@@ -16,6 +20,11 @@ protected:
 	GameStateManager* gsm;
 private:
 	Player* player;
+	typedef vector<Sprite*> SpriteVector;
+	SpriteVector ground;
+	SpriteVector rWall;
+	SpriteVector lWall;
+	SpriteVector ceiling;
 };
 
 #endif
