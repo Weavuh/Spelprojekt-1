@@ -22,6 +22,10 @@ public:
 	sf::Sprite getAboveFeet();
 	bool movingRight();
 	bool getTouchL();
+	int getX();
+	int getY();
+	void setX(int i);
+	void setY(int i);
 private:
 	float x;
 	float velX;
@@ -30,7 +34,6 @@ private:
 	float accY;
 	bool jumping;
 	bool inJump;
-	bool canJump;
 	int animeTimer;
 	int frameW;
 	int frameH;
@@ -38,6 +41,10 @@ private:
 	bool hitC, hitR, hitL, hitG;
 	bool touchL;
 	bool hitAboveG;
+	bool gliding;
+	bool canJump;
+	bool canGlide;
+	bool canFly;
 };
 
 #endif

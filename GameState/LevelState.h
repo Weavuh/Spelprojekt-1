@@ -16,15 +16,18 @@ public:
 	virtual void update();
 	virtual void draw(sf::RenderWindow* window);
 	virtual void handleInputs(sf::Event* events);
+	bool isOffScreen(Sprite sprite);
 protected:
 	GameStateManager* gsm;
 private:
 	Player* player;
 	typedef vector<Sprite*> SpriteVector;
 	SpriteVector ground;
-	SpriteVector rWall;
-	SpriteVector lWall;
+	SpriteVector wall;
 	SpriteVector ceiling;
+
+	SpriteVector foreGround;
+	View view;
 };
 
 #endif

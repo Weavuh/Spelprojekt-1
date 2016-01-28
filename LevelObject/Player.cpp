@@ -17,7 +17,6 @@ y(500),
 velY(0),
 accY(0),
 jumping(false),
-canJump(false),
 animeTimer(0),
 frameW(0),
 frameH(0),
@@ -27,7 +26,11 @@ hitG(false),
 hitL(false),
 touchL(false),
 hitR(false),
-hitAboveG(false)
+hitAboveG(false),
+gliding(false),
+canJump(true),
+canGlide(true),
+canFly(true)
 {
 	init();
 }
@@ -57,14 +60,17 @@ void Player::update()
 	}
 	else velX = 0;
 
+	if (Keyboard::isKeyPressed(Keyboard::Z) && !hitG && velY > 0 && canGlide)
+	{
+		gliding = true;
+	}
+	else gliding = false;
+
 	// update movement
 	if (!hitG)
 	{
 		accY = 0.7;
-		canJump = false;
 	}
-	else canJump = true;
-	if (!inJump && velY < 4) canJump = true;
 	if (jumping)
 	{
 		velY = -15;
@@ -102,12 +108,14 @@ void Player::update()
 	x += velX;
 	velY += accY;
 	if (velY > 20) velY = 20;
+	if (velY > 1 && gliding) velY = 1;
 	y += velY;
 	
 	playerSprite.setPosition(x, y);
 
 	// update animations
-	if (velY < 0) frameH = 2;
+	if (gliding && velY > 0) frameH = 4;
+	else if (velY < 0) frameH = 2;
 	else if (velY > 4) frameH = 3;
 	else if (velX != 0) frameH = 1;
 	else frameH = 0;
@@ -143,9 +151,10 @@ void Player::handleInputs(Event* events)
 {
 	if (events->type == Event::KeyPressed)
 	{
-		if (events->key.code == Keyboard::Z)
+		if (events->key.code == Keyboard::Z && canJump)
 		{
-			if (canJump && !inJump) jumping = true;
+			if (canFly) jumping = true;
+			else if (!inJump) jumping = true;
 		}
 		if (events->key.code == Keyboard::Return)
 		{
@@ -207,4 +216,24 @@ bool Player::movingRight()
 bool Player::getTouchL()
 {
 	return touchL;
+}
+
+int Player::getX()
+{
+	return x;
+}
+
+int Player::getY()
+{
+	return y;
+}
+
+void Player::setX(int i)
+{
+	x = i;
+}
+
+void Player::setY(int i)
+{
+	y = i;
 }
