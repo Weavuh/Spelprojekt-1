@@ -28,6 +28,8 @@ touchL(false),
 hitR(false),
 hitAboveG(false),
 gliding(false),
+climbing(false),
+climbTimer(0),
 canJump(true),
 canGlide(true),
 canFly(true)
@@ -79,6 +81,30 @@ void Player::update()
 		inJump = true;
 	}
 
+	if (climbing)
+	{
+		climbTimer++;
+		velX = 0;
+		velY = 0;
+		accY = 0;
+		if (climbTimer < 45)
+		{
+			velY = -2;
+		}
+		else if (climbTimer < 110)
+		{
+			velY = 0;
+			velX = 2;
+		}
+		
+		if (climbTimer == 110)
+		{
+			x += 10;
+			climbing = false;
+			climbTimer = 0;
+		}
+	}
+
 	if (hitG && velY >= 0)
 	{
 		accY = 0;
@@ -114,7 +140,8 @@ void Player::update()
 	playerSprite.setPosition(x, y);
 
 	// update animations
-	if (gliding && velY > 0) frameH = 4;
+	if (climbing) frameH = 5;
+	else if (gliding && velY > 0) frameH = 4;
 	else if (velY < 0) frameH = 2;
 	else if (velY > 4) frameH = 3;
 	else if (velX != 0) frameH = 1;
@@ -127,8 +154,10 @@ void Player::update()
 		frameW++;
 	}
 
-	if (frameH < 2 && frameW > 3) frameW = 0;
-	if (frameH > 1 && frameW > 1) frameW = 0;
+	//							wtf :c
+	if (frameH == 5 && frameW > 312) frameW = 0;
+	else if (frameH < 2 && frameW > 3) frameW = 0;
+	else if (frameH > 1 && frameW > 1) frameW = 0;
 
 	bool tempFacing = facingRight;
 
@@ -236,4 +265,17 @@ void Player::setX(int i)
 void Player::setY(int i)
 {
 	y = i;
+}
+
+void Player::setClimbing(bool b)
+{
+	climbing = b;
+}
+
+void Player::finalize()
+{
+	if (!facingRight)
+	{
+		playerSprite.scale(-1.f, 1.f);
+	}
 }

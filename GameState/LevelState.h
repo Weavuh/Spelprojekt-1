@@ -25,9 +25,9 @@ private:
 	SpriteVector ground;
 	SpriteVector wall;
 	SpriteVector ceiling;
-
 	SpriteVector foreGround;
 	View view;
+	bool escape;
 };
 
 #endif

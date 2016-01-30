@@ -26,6 +26,8 @@ public:
 	int getY();
 	void setX(int i);
 	void setY(int i);
+	void setClimbing(bool b);
+	void finalize();
 private:
 	float x;
 	float velX;
@@ -42,6 +44,8 @@ private:
 	bool touchL;
 	bool hitAboveG;
 	bool gliding;
+	bool climbing;
+	int climbTimer;
 	bool canJump;
 	bool canGlide;
 	bool canFly;

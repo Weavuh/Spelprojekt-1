@@ -5,19 +5,20 @@
 // backgrounds
 Texture tBg1;
 Sprite sBg1;
-Texture tBg1B;
 Sprite sBg1B;
 Texture tBg2;
 Sprite sBg2;
 
 // platforms
-Texture tCollisionG1, tCollisionG2, tCollisionG3, tCollisionG4, tCollisionG5;
-Texture tCollisionW;
+Texture tCollisionG1;
+Texture tCollisionW1;
+Texture tCollisionW2;
 Texture tCollisionC;
 
-Sprite collG1, collG2, collG3, collG4, collG5;
-Sprite collG1B, collG5B;
-Sprite collW;
+Sprite collG1;
+Sprite collG1B;
+Sprite collW1;
+Sprite collW2;
 Sprite collC;
 
 // foreground
@@ -28,7 +29,8 @@ Sprite sForeGround1;
 Music bgMusic;
 
 LevelState::LevelState(GameStateManager* gsm) :
-gsm(gsm)
+gsm(gsm),
+escape(false)
 {
 	init();
 }
@@ -39,9 +41,8 @@ void LevelState::init()
 	tBg1.loadFromFile("Resources/levelBg.png");
 	sBg1.setTexture(tBg1);
 	sBg1.setPosition(0, 0);
-	tBg1B.loadFromFile("Resources/levelBg.png");
-	sBg1B.setTexture(tBg1B);
-	sBg1B.setPosition(tBg1.getSize().x * -1, 0);
+	sBg1B.setTexture(tBg1);
+	
 	tBg2.loadFromFile("Resources/levelBg2.png");
 	sBg2.setTexture(tBg2);
 	sBg2.setPosition(0, 0);
@@ -56,54 +57,37 @@ void LevelState::init()
 	// camera view
 	view = View(FloatRect(0, 0, 1920, 1080));
 
+	sBg1B.setPosition(-1920, 0);
+
 	// platforms
-	tCollisionG1.loadFromFile("Resources/cGround1.png");
-	tCollisionG2.loadFromFile("Resources/cGround2.png");
-	tCollisionG3.loadFromFile("Resources/cGround3.png");
-	tCollisionG4.loadFromFile("Resources/cGround4.png");
-	tCollisionG5.loadFromFile("Resources/cGround5.png");
-	tCollisionW.loadFromFile("Resources/cWall1.png");
+	tCollisionG1.loadFromFile("Resources/cGroundPull.png");
+	tCollisionW1.loadFromFile("Resources/cWallPull.png");
+	tCollisionW2.loadFromFile("Resources/cWallPull2.png");
 	tCollisionC.loadFromFile("Resources/cCeiling.png");
 	
 	collG1.setTexture(tCollisionG1);
-	collG1.setPosition(-400, 600);
-	collG2.setTexture(tCollisionG2);
-	collG2.setPosition(1200, 700);
-	collG3.setTexture(tCollisionG3);
-	collG3.setPosition(1700, 700);
-	collG4.setTexture(tCollisionG4);
-	collG4.setPosition(2300, 700);
-	collG5.setTexture(tCollisionG5);
-	collG5.setPosition(2700, 700);
-	collW.setTexture(tCollisionW);
-	collW.setPosition(1000, 700);
+	collG1.setPosition(-100, 600);
+	collW1.setTexture(tCollisionW1);
+	collW1.setPosition(-100+1187, 600+134);
+	collW2.setTexture(tCollisionW2);
+	collW2.setPosition(-100, 600);
 	collC.setTexture(tCollisionC);
 	collC.setPosition(100, 400);
 
 	ground.push_back(&collG1);
-	ground.push_back(&collG2);
-	ground.push_back(&collG3);
-	ground.push_back(&collG4);
-	ground.push_back(&collG5);
-	wall.push_back(&collW);
-	ceiling.push_back(&collC);
+	wall.push_back(&collW1);
+	wall.push_back(&collW2);
+	//ceiling.push_back(&collC);
 
-	Collision::CreateTextureAndBitmask(tCollisionG1, "Resources/cGround1.png");
-	Collision::CreateTextureAndBitmask(tCollisionG2, "Resources/cGround2.png");
-	Collision::CreateTextureAndBitmask(tCollisionG3, "Resources/cGround3.png");
-	Collision::CreateTextureAndBitmask(tCollisionG4, "Resources/cGround4.png");
-	Collision::CreateTextureAndBitmask(tCollisionG5, "Resources/cGround5.png");
-	Collision::CreateTextureAndBitmask(tCollisionW, "Resources/cWall1.png");
+	Collision::CreateTextureAndBitmask(tCollisionG1, "Resources/cGroundPull.png");
+	Collision::CreateTextureAndBitmask(tCollisionW1, "Resources/cWallPull.png");
+	Collision::CreateTextureAndBitmask(tCollisionW2, "Resources/cWallPull2.png");
 	Collision::CreateTextureAndBitmask(tCollisionC, "Resources/cCeiling.png");
 
 	// looped stuff
-	collG1B = collG1;
-	collG1B.setPosition(-400 + 4000, 600);
-	ground.push_back(&collG1B);
-
-	collG5B = collG5;
-	collG5B.setPosition(2700 - 4000, 700);
-	ground.push_back(&collG5B);
+	//collG1B = collG1;
+	//collG1B.setPosition(-400 + 5100, 600);
+	//ground.push_back(&collG1B);
 
 	// foreground
 	tForeGround1.loadFromFile("Resources/foreGround1.png");
@@ -120,8 +104,8 @@ void LevelState::update()
 {
 	// update player
 	player->update();
-	if (player->getX() > 3700) player->setX(-300);
-	if (player->getX() < -300) player->setX(3700);
+	if (player->getX() > 4800) player->setX(-300);
+	if (player->getX() < -300) player->setX(4800);
 
 	player->setHitG(false);
 	player->setHitL(false);
@@ -150,6 +134,7 @@ void LevelState::update()
 		{
 			if (player->movingRight() && !player->getTouchL()) player->setHitR(true);
 			else player->setHitL(true);
+			if (wall[i]->getGlobalBounds().height == 90) player->setClimbing(true);
 		}
 	}
 	for (int i = 0; i < ceiling.size(); i++)
@@ -162,16 +147,18 @@ void LevelState::update()
 
 	// update camera, background and foreground
 	int tempX = view.getCenter().x;
+	int tempY = view.getCenter().y;
 	view.setCenter(player->getX(), player->getY());
 	sForeGround1.move(-((view.getCenter().x - tempX) * 2), 0);
-	sBg1.move(((view.getCenter().x - tempX) * 0.3), 0);
-	sBg1B.move(((view.getCenter().x - tempX) * 0.3), 0);
-	sBg2.move(((view.getCenter().x - tempX) * 0.1), 0);
+	sBg1.move(((view.getCenter().x - tempX) * 0.3), view.getCenter().y - tempY);
+	sBg1B.move(((view.getCenter().x - tempX) * 0.3), view.getCenter().y - tempY);
+	sBg2.move(((view.getCenter().x - tempX) * 0.1), view.getCenter().y - tempY);
 
-	//if (sBg1.getPosition().x < view.getCenter().x - 1200) sBg1.move(1920, 0);
-	//else if (sBg1.getPosition().x > view.getCenter().x + 1200) sBg1.move(-1920, 0);
-	if (sBg2.getPosition().x < view.getCenter().x - 1200) sBg2.move(1920, 0);
-	//else if (sBg2.getPosition().x > view.getCenter().x + 1200) sBg2.move(-1920, 0);
+	// loop backgrounds
+	if (sBg1.getPosition().x + sBg1.getGlobalBounds().width < view.getCenter().x - 1000) sBg1.setPosition(sBg1B.getPosition().x + 1920, sBg1.getPosition().y);
+	else if (sBg1.getPosition().x > view.getCenter().x + 1000) sBg1.setPosition(sBg1B.getPosition().x - 1920, sBg1.getPosition().y);
+	if (sBg1B.getPosition().x + sBg1B.getGlobalBounds().width < view.getCenter().x - 1000) sBg1B.setPosition(sBg1.getPosition().x + 1920, sBg1B.getPosition().y);
+	else if (sBg1B.getPosition().x > view.getCenter().x + 1000) sBg1B.setPosition(sBg1.getPosition().x - 1920, sBg1B.getPosition().y);
 
 	if (Keyboard::isKeyPressed(Keyboard::Space) && view.getSize().x < 1920 * 5)
 	{
@@ -199,24 +186,37 @@ void LevelState::draw(RenderWindow* window)
 
 	// draw platforms
 	if (!isOffScreen(collG1)) window->draw(collG1);
-	if (!isOffScreen(collG2)) window->draw(collG2);
-	if (!isOffScreen(collG3)) window->draw(collG3);
-	if (!isOffScreen(collG4)) window->draw(collG4);
-	if (!isOffScreen(collG5)) window->draw(collG5);
-	if (!isOffScreen(collW)) window->draw(collW);
-	if (!isOffScreen(collC)) window->draw(collC);
+	if (!isOffScreen(collW1)) window->draw(collW1);
+	if (!isOffScreen(collW2)) window->draw(collW2);
+	//if (!isOffScreen(collC)) window->draw(collC);
 
-	if (!isOffScreen(collG1B)) window->draw(collG1B);
-	if (!isOffScreen(collG5B)) window->draw(collG5B);
+	//if (!isOffScreen(collG1B)) window->draw(collG1B);
 
 	// draw foreground
 	if (!isOffScreen(sForeGround1)) window->draw(sForeGround1);
+
+	if (escape)
+	{
+		view.setSize(1920, 1080);
+		view.setCenter(960, 540);
+		window->setView(view);
+		player->finalize();
+		gsm->setState(GameStateManager::states::MENUSTATE);
+	}
 }
 
 void LevelState::handleInputs(Event* events)
 {
 	// update player inputs
 	player->handleInputs(events);
+
+	if (events->type == Event::KeyPressed)
+	{
+		if (events->key.code == Keyboard::Escape)
+		{
+			escape = true;
+		}
+	}
 }
 
 bool LevelState::isOffScreen(Sprite sprite)
