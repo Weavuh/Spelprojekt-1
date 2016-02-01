@@ -32,7 +32,11 @@ climbing(false),
 climbTimer(0),
 canJump(true),
 canGlide(true),
-canFly(true)
+canFly(false),
+holdingLeft(false),
+holdingRight(false),
+sliding(0),
+slideTimer(0)
 {
 	init();
 }
@@ -52,13 +56,17 @@ void Player::init()
 void Player::update()
 {
 	// update holding inputs
+	holdingLeft = false;
+	holdingRight = false;
 	if (Keyboard::isKeyPressed(Keyboard::Right))
 	{
 		velX = 6;
+		holdingRight = true;
 	}
 	else if (Keyboard::isKeyPressed(Keyboard::Left))
 	{
 		velX = -6;
+		holdingLeft = true;
 	}
 	else velX = 0;
 
@@ -94,14 +102,29 @@ void Player::update()
 		else if (climbTimer < 110)
 		{
 			velY = 0;
-			velX = 2;
+			if (facingRight) velX = 2;
+			else velX = -2;
 		}
 		
 		if (climbTimer == 110)
 		{
-			x += 10;
 			climbing = false;
 			climbTimer = 0;
+		}
+	}
+
+	if (sliding == 1)
+	{
+		slideTimer++;
+		if (slideTimer < 100)
+		{
+			velX = -5;
+			velY = 5;
+		}
+		else if (slideTimer == 100)
+		{
+			sliding = 0;
+
 		}
 	}
 
@@ -154,10 +177,9 @@ void Player::update()
 		frameW++;
 	}
 
-	//							wtf :c
-	if (frameH == 5 && frameW > 312) frameW = 0;
+	if (frameH == 5 && frameW > 2) frameW = 0;
 	else if (frameH < 2 && frameW > 3) frameW = 0;
-	else if (frameH > 1 && frameW > 1) frameW = 0;
+	else if (frameH > 1 && frameH < 5 && frameW > 1) frameW = 0;
 
 	bool tempFacing = facingRight;
 
@@ -278,4 +300,39 @@ void Player::finalize()
 	{
 		playerSprite.scale(-1.f, 1.f);
 	}
+}
+
+bool Player::getHitG()
+{
+	return hitG;
+}
+
+bool Player::getHoldingLeft()
+{
+	return holdingLeft;
+}
+
+bool Player::getHoldingRight()
+{
+	return holdingRight;
+}
+
+bool Player::getFacingRight()
+{
+	return facingRight;
+}
+
+void Player::setCanJump(bool b)
+{
+	canJump = b;
+}
+
+bool Player::getFalling()
+{
+	return (velY > 0);
+}
+
+void Player::setVelY(float f)
+{
+	velY = f;
 }

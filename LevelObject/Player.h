@@ -28,27 +28,48 @@ public:
 	void setY(int i);
 	void setClimbing(bool b);
 	void finalize();
+	bool getHitG();
+	bool getHoldingRight();
+	bool getHoldingLeft();
+	bool getFacingRight();
+	void setCanJump(bool b);
+	bool getFalling();
+	void setVelY(float f);
 private:
+	// movement
 	float x;
 	float velX;
 	float y;
 	float velY;
 	float accY;
+	// starting jump, in jump
 	bool jumping;
 	bool inJump;
+	// animation timer, frames
 	int animeTimer;
 	int frameW;
 	int frameH;
+	// facing right
 	bool facingRight;
+	// collide on all sides
 	bool hitC, hitR, hitL, hitG;
+	// for determing which hit should be on
 	bool touchL;
+	// collision with hitbox above feet for slopes
 	bool hitAboveG;
+	// gliding and climbing
 	bool gliding;
 	bool climbing;
 	int climbTimer;
+	// abilities
 	bool canJump;
 	bool canGlide;
 	bool canFly;
+	// holding buttons
+	bool holdingRight, holdingLeft;
+	// which slope the owl is sliding on
+	int sliding;
+	int slideTimer;
 };
 
 #endif

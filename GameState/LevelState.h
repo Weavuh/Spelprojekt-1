@@ -3,6 +3,8 @@
 
 #include "GameState.h"
 #include "Player.h"
+#include "Bunny.h"
+#include "Shroom.h"
 #include <vector>
 
 using namespace std;
@@ -21,6 +23,8 @@ protected:
 	GameStateManager* gsm;
 private:
 	Player* player;
+	Bunny* bunny;
+	Shroom* shroom;
 	typedef vector<Sprite*> SpriteVector;
 	SpriteVector ground;
 	SpriteVector wall;
